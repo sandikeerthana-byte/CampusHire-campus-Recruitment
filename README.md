@@ -27,4 +27,4 @@ Download the HTML file and open it in any browser.
 - Resume upload and email notifications
 
 ## Author
-Sandhi Charan – B.Tech CSE, CVR College of Engineering
+Sandi Keerthana - B.Tech Computer Engineering, National Institute of Advanced Manufacturing Technology Ranchi
