@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusHire – Campus Recruitment Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0f1e;--surface:#111827;--surface2:#1a2235;--border:#1f2d45;--accent:#00d4aa;--accent2:#ff6b35;--accent3:#7c3aed;--text:#e2e8f0;--muted:#64748b;--dim:#94a3b8;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--info:#3b82f6;--r:12px;--rs:8px;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px;}
+.app{display:flex;min-height:100vh;}
+.sidebar{width:250px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;height:100vh;z-index:100;}
+.main{margin-left:250px;flex:1;display:flex;flex-direction:column;}
+.logo{padding:24px 20px 18px;border-bottom:1px solid var(--border);}
+.logo-mark{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--accent);}
+.logo-mark span{color:var(--accent2);}
+.logo-sub{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+.nav{flex:1;padding:12px 0;overflow-y:auto;}
+.nav-group{padding:8px 14px 2px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 18px;cursor:pointer;color:var(--dim);font-size:13px;border-left:3px solid transparent;transition:all .2s;margin:1px 0;}
+.nav-item:hover{background:var(--surface2);color:var(--text);}
+.nav-item.active{background:rgba(0,212,170,.08);border-left-color:var(--accent);color:var(--accent);font-weight:500;}
+.ni{font-size:15px;width:18px;text-align:center;}
+.nbadge{margin-left:auto;background:var(--accent);color:var(--bg);font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;}
+.nbadge.o{background:var(--accent2);}
+.sidebar-footer{padding:14px 18px;border-top:1px solid var(--border);}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px;border-radius:var(--rs);background:var(--surface2);}
+.uavatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;font-family:'Syne',sans-serif;}
+.uname{font-size:12px;font-weight:500;}.urole{font-size:10px;color:var(--muted);}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(10,15,30,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:12px 24px;display:flex;align-items:center;gap:14px;}
+.page-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;flex:1;}
+.search-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);padding:7px 12px;display:flex;align-items:center;gap:8px;transition:border-color .2s;}
+.search-box:focus-within{border-color:var(--accent);}
+.search-box input{background:none;border:none;outline:none;color:var(--text);font-size:12px;width:180px;font-family:'DM Sans',sans-serif;}
+.search-box input::placeholder{color:var(--muted);}
+.btn{padding:7px 16px;border-radius:var(--rs);font-size:12px;font-weight:500;cursor:pointer;border:none;transition:all .2s;font-family:'DM Sans',sans-serif;display:inline-flex;align-items:center;gap:5px;}
+.btn-primary{background:var(--accent);color:var(--bg);}.btn-primary:hover{background:#00bfa0;box-shadow:0 0 14px rgba(0,212,170,.3);}
+.btn-outline{background:transparent;color:var(--dim);border:1px solid var(--border);}.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+.btn-danger{background:rgba(239,68,68,.12);color:var(--danger);border:1px solid rgba(239,68,68,.25);}.btn-danger:hover{background:rgba(239,68,68,.22);}
+.btn-warn{background:rgba(245,158,11,.12);color:var(--warning);border:1px solid rgba(245,158,11,.25);}
+.btn-sm{padding:4px 10px;font-size:11px;}
+.content{flex:1;padding:24px;overflow-y:auto;}
+.page{display:none;animation:fadeIn .25s ease;}.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.4);}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.stat-card.teal::before{background:var(--accent);}.stat-card.orange::before{background:var(--accent2);}.stat-card.purple::before{background:var(--accent3);}.stat-card.blue::before{background:var(--info);}
+.stat-icon{font-size:24px;margin-bottom:8px;}.stat-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:2px;}.stat-lbl{font-size:12px;color:var(--muted);}.stat-chg{font-size:11px;margin-top:6px;color:var(--success);}.stat-chg.dn{color:var(--danger);}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:18px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}.card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;}
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{text-align:left;padding:9px 12px;color:var(--muted);font-weight:500;border-bottom:1px solid var(--border);text-transform:uppercase;font-size:10px;letter-spacing:.7px;}
+td{padding:11px 12px;border-bottom:1px solid rgba(31,45,69,.4);vertical-align:middle;}
+tr:hover td{background:var(--surface2);}tr:last-child td{border-bottom:none;}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:600;}
+.b-success{background:rgba(16,185,129,.15);color:var(--success);}.b-warning{background:rgba(245,158,11,.15);color:var(--warning);}.b-danger{background:rgba(239,68,68,.15);color:var(--danger);}.b-info{background:rgba(59,130,246,.15);color:var(--info);}.b-purple{background:rgba(124,58,237,.15);color:#a78bfa;}.b-muted{background:var(--surface2);color:var(--muted);}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;font-family:'Syne',sans-serif;flex-shrink:0;}
+.avatar-sm{width:26px;height:26px;font-size:10px;}.flex-c{display:flex;align-items:center;gap:8px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fg{display:flex;flex-direction:column;gap:5px;}.fg.full{grid-column:1/-1;}
+label{font-size:11px;font-weight:500;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;}
+input,select,textarea{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:9px 12px;color:var(--text);font-size:12px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;width:100%;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);}
+select option{background:var(--surface);}
+textarea{resize:vertical;min-height:70px;}
+.err-msg{color:var(--danger);font-size:11px;margin-top:6px;display:none;padding:6px 10px;background:rgba(239,68,68,.1);border-radius:6px;border:1px solid rgba(239,68,68,.2);}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;width:540px;max-width:95vw;max-height:90vh;overflow-y:auto;animation:slideUp .22s ease;box-shadow:0 24px 64px rgba(0,0,0,.6);}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;}
+.modal-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px;line-height:1;}.modal-close:hover{color:var(--text);}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;}
+.pbar{background:var(--border);border-radius:10px;height:5px;overflow:hidden;}.pfill{height:100%;border-radius:10px;transition:width .5s ease;}
+.job-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:16px;transition:all .2s;}
+.job-card:hover{border-color:var(--accent);box-shadow:0 0 18px rgba(0,212,170,.12);}
+.co-logo{width:40px;height:40px;border-radius:var(--rs);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:10px;border:1px solid var(--border);}
+.jt{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:2px;}.jc{font-size:11px;color:var(--muted);margin-bottom:8px;}
+.jtags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}.jtag{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:10px;color:var(--dim);}
+.jmeta{display:flex;justify-content:space-between;align-items:center;}.jsal{font-size:12px;font-weight:600;color:var(--accent);}.jdl{font-size:10px;color:var(--muted);}
+.pipeline{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;}
+.pipe-col{min-width:210px;flex-shrink:0;}
+.pipe-head{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:var(--rs) var(--rs) 0 0;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.ph-applied{background:rgba(59,130,246,.15);color:var(--info);}.ph-screening{background:rgba(245,158,11,.15);color:var(--warning);}.ph-interview{background:rgba(124,58,237,.15);color:#a78bfa;}.ph-offered{background:rgba(0,212,170,.15);color:var(--accent);}.ph-rejected{background:rgba(239,68,68,.15);color:var(--danger);}
+.pcnt{background:currentColor;color:var(--bg);border-radius:10px;padding:1px 6px;font-size:9px;}
+.app-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rs);padding:10px;margin-bottom:6px;}
+.app-card:hover{border-color:var(--accent);}
+.acn{font-size:12px;font-weight:600;margin-bottom:1px;}.acr{font-size:10px;color:var(--muted);margin-bottom:6px;}.acm{display:flex;align-items:center;justify-content:space-between;}
+.mini-chart{display:flex;align-items:flex-end;gap:3px;}
+.bar{background:rgba(0,212,170,.3);border-radius:3px 3px 0 0;flex:1;transition:background .2s;cursor:pointer;min-width:8px;}.bar:hover{background:var(--accent);}
+.bar.o{background:rgba(255,107,53,.3);}.bar.o:hover{background:var(--accent2);}
+.act-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);}.act-item:last-child{border-bottom:none;}
+.act-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;}.act-text{font-size:12px;color:var(--dim);}.act-text strong{color:var(--text);font-weight:500;}.act-time{font-size:10px;color:var(--muted);margin-top:2px;}
+.ftabs{display:flex;gap:3px;background:var(--surface2);border-radius:var(--rs);padding:3px;margin-bottom:16px;width:fit-content;flex-wrap:wrap;}
+.ftab{padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;color:var(--muted);transition:all .2s;user-select:none;}.ftab.active{background:var(--surface);color:var(--text);font-weight:500;}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--surface);border:1px solid var(--accent);border-radius:var(--r);padding:12px 18px;font-size:12px;z-index:500;box-shadow:0 8px 32px rgba(0,0,0,.4);transform:translateY(100px);opacity:0;transition:all .3s ease;pointer-events:none;display:flex;align-items:center;gap:8px;max-width:320px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;align-items:center;justify-content:center;}.confirm-overlay.open{display:flex;}
+.confirm-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;width:360px;box-shadow:0 24px 64px rgba(0,0,0,.6);animation:slideUp .2s ease;}
+.confirm-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;}.confirm-msg{font-size:12px;color:var(--dim);margin-bottom:18px;}.confirm-actions{display:flex;gap:8px;justify-content:flex-end;}
+</style>
+</head>
+<body>
+<div id="loginOverlay" style="position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;align-items:center;justify-content:center;">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;width:340px;max-width:92vw">
+    <div class="logo-mark" style="font-size:26px">Campus<span>Hire</span></div>
+    <div class="logo-sub" style="margin-bottom:20px">Campus Recruitment Management</div>
+    <input id="lg_user" placeholder="Username" style="width:100%;padding:10px;margin-bottom:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text)">
+    <input id="lg_pass" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()" style="width:100%;padding:10px;margin-bottom:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text)">
+    <div id="lg_err" style="display:none;color:var(--danger);font-size:12px;margin-bottom:8px">Wrong username or password.</div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px" onclick="doLogin()">Login</button>
+    <div style="font-size:11px;color:var(--muted);margin-top:14px;text-align:center">Demo login: admin / admin123</div>
+  </div>
+</div>
+<script>if(sessionStorage.getItem('ch_auth')==='1')document.getElementById('loginOverlay').style.display='none';</script>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><div class="logo-mark">Campus<span>Hire</span></div><div class="logo-sub">Recruitment Platform</div></div>
+  <nav class="nav">
+    <div class="nav-group">Overview</div>
+    <div class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard',this)"><span class="ni">⬛</span>Dashboard</div>
+    <div class="nav-group">Students</div>
+    <div class="nav-item" id="nav-students" onclick="showPage('students',this)"><span class="ni">👤</span>Students<span class="nbadge" id="nb-students">8</span></div>
+    <div class="nav-group">Placements</div>
+    <div class="nav-item" id="nav-jobs" onclick="showPage('jobs',this)"><span class="ni">💼</span>Job Postings<span class="nbadge o" id="nb-jobs">6</span></div>
+    <div class="nav-item" id="nav-applications" onclick="showPage('applications',this)"><span class="ni">📄</span>Applications<span class="nbadge" id="nb-apps">7</span></div>
+    <div class="nav-item" id="nav-pipeline" onclick="showPage('pipeline',this)"><span class="ni">🔄</span>Pipeline</div>
+    <div class="nav-group">Companies</div>
+    <div class="nav-item" id="nav-companies" onclick="showPage('companies',this)"><span class="ni">🏢</span>Companies<span class="nbadge" id="nb-companies">7</span></div>
+    <div class="nav-group">Reports</div>
+    <div class="nav-item" id="nav-reports" onclick="showPage('reports',this)"><span class="ni">📊</span>Analytics</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-card"><div class="uavatar">A</div><div><div class="uname">Admin User</div><div class="urole">Placement Officer</div></div></div>
+    <div style="display:flex;gap:6px;margin-top:10px"><button class="btn btn-outline btn-sm" style="flex:1" onclick="exportStudents()">⬇ Students</button><button class="btn btn-outline btn-sm" style="flex:1" onclick="exportApplications()">⬇ Apps</button></div>
+    <div style="display:flex;gap:6px;margin-top:6px"><button class="btn btn-warn btn-sm" style="flex:1" onclick="resetDemoData()">Reset data</button><button class="btn btn-danger btn-sm" style="flex:1" onclick="logout()">Logout</button></div>
+  </div>
+</aside>
+
+<main class="main">
+  <div class="topbar">
+    <div class="page-title" id="pageTitle">Dashboard</div>
+    <div class="search-box"><span style="color:var(--muted)">🔍</span><input type="text" id="globalSearch" placeholder="Search students, companies..." oninput="handleSearch(this.value)"></div>
+    <button class="btn btn-outline btn-sm" onclick="openModal('notifModal')">🔔</button>
+    <button class="btn btn-primary btn-sm" onclick="openModal('quickAddModal')">+ Add New</button>
+  </div>
+  <div class="content">
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="stats-grid">
+      <div class="stat-card teal"><div class="stat-icon">👥</div><div class="stat-val" id="ds-students">8</div><div class="stat-lbl">Registered Students</div><div class="stat-chg" id="ds-placed-rate">37.5% placed</div></div>
+      <div class="stat-card orange"><div class="stat-icon">🏢</div><div class="stat-val" id="ds-companies">7</div><div class="stat-lbl">Companies</div><div class="stat-chg">↑ 5 new partners</div></div>
+      <div class="stat-card purple"><div class="stat-icon">💼</div><div class="stat-val" id="ds-jobs">6</div><div class="stat-lbl">Active Job Openings</div><div class="stat-chg">↑ 6 active now</div></div>
+      <div class="stat-card blue"><div class="stat-icon">✅</div><div class="stat-val" id="ds-placed">3</div><div class="stat-lbl">Students Placed</div><div class="stat-chg">↑ Growing</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card"><div class="card-header"><div class="card-title">Placement Trend 2024</div></div>
+        <div class="mini-chart" id="trend-chart" style="height:80px"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--muted)"><span>Jan</span><span>Apr</span><span>Jul</span><span>Oct</span><span>Dec</span></div>
+      </div>
+      <div class="card"><div class="card-header"><div class="card-title">Applications by Domain</div></div><div id="domain-chart"></div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header"><div class="card-title">Recent Applications</div><button class="btn btn-outline btn-sm" onclick="showPage('applications',document.getElementById('nav-applications'))">View All</button></div>
+        <div class="table-wrap"><table><thead><tr><th>Student</th><th>Company</th><th>Status</th></tr></thead><tbody id="dash-apps"></tbody></table></div>
+      </div>
+      <div class="card"><div class="card-header"><div class="card-title">Recent Activity</div></div><div id="dash-activity"></div></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Upcoming Drives</div><button class="btn btn-primary btn-sm" onclick="openModal('jobModal')">+ Post Drive</button></div>
+      <div class="table-wrap"><table><thead><tr><th>Company</th><th>Role</th><th>Date</th><th>Branches</th><th>CTC</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td><div class="flex-c"><span>🔵</span><strong>TCS</strong></div></td><td>Systems Engineer</td><td>Mar 15, 2025</td><td>CSE, ECE, IT</td><td style="color:var(--accent)">₹3.5 LPA</td><td><span class="badge b-success">Confirmed</span></td></tr>
+        <tr><td><div class="flex-c"><span>🟠</span><strong>Accenture</strong></div></td><td>Assoc. Software Eng.</td><td>Mar 22, 2025</td><td>CSE, IT, MCA</td><td style="color:var(--accent)">₹4.5 LPA</td><td><span class="badge b-success">Confirmed</span></td></tr>
+        <tr><td><div class="flex-c"><span>🔷</span><strong>Deloitte</strong></div></td><td>Business Analyst</td><td>Apr 5, 2025</td><td>All Branches</td><td style="color:var(--accent)">₹6.5 LPA</td><td><span class="badge b-warning">Pending</span></td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+
+  <!-- STUDENTS -->
+  <div class="page" id="page-students">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div class="ftabs">
+        <div class="ftab active" onclick="filterStudents('all',this)">All</div>
+        <div class="ftab" onclick="filterStudents('Placed',this)">Placed</div>
+        <div class="ftab" onclick="filterStudents('Not Placed',this)">Unplaced</div>
+        <div class="ftab" onclick="filterStudents('In Process',this)">In Process</div>
+        <div class="ftab" onclick="filterStudents('Not Eligible',this)">Not Eligible</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <div class="search-box"><span style="color:var(--muted)">🔍</span><input type="text" id="studentSearch" placeholder="Search..." oninput="renderStudents()"></div>
+        <button class="btn btn-primary btn-sm" onclick="resetStudentForm();openModal('studentModal')">+ Register Student</button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="table-wrap"><table><thead><tr><th>Student</th><th>Roll No.</th><th>Branch</th><th>CGPA</th><th>Backlogs</th><th>Email</th><th>Apps</th><th>Status</th><th>Actions</th></tr></thead><tbody id="student-tbody"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- JOBS -->
+  <div class="page" id="page-jobs">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div class="ftabs">
+        <div class="ftab active" onclick="filterJobs('all',this)">All</div>
+        <div class="ftab" onclick="filterJobs('Active',this)">Active</div>
+        <div class="ftab" onclick="filterJobs('Closed',this)">Closed</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <div class="search-box"><span style="color:var(--muted)">🔍</span><input type="text" id="jobSearch" placeholder="Search..." oninput="renderJobs()"></div>
+        <button class="btn btn-primary btn-sm" onclick="resetJobForm();openModal('jobModal')">+ Post Job</button>
+      </div>
+    </div>
+    <div class="grid-3" id="jobs-grid"></div>
+  </div>
+
+  <!-- APPLICATIONS -->
+  <div class="page" id="page-applications">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div class="ftabs">
+        <div class="ftab active" onclick="filterApps('all',this)">All</div>
+        <div class="ftab" onclick="filterApps('Applied',this)">Applied</div>
+        <div class="ftab" onclick="filterApps('Screening',this)">Screening</div>
+        <div class="ftab" onclick="filterApps('Interview',this)">Interview</div>
+        <div class="ftab" onclick="filterApps('Offered',this)">Offered</div>
+        <div class="ftab" onclick="filterApps('Rejected',this)">Rejected</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <div class="search-box"><span style="color:var(--muted)">🔍</span><input type="text" id="appSearch" placeholder="Search..." oninput="renderApplications()"></div>
+        <button class="btn btn-primary btn-sm" onclick="resetAppForm();openModal('applyModal')">+ New Application</button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="table-wrap"><table><thead><tr><th>Student</th><th>Company</th><th>Role</th><th>Applied On</th><th>Round</th><th>Status</th><th>Actions</th></tr></thead><tbody id="app-tbody"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- PIPELINE -->
+  <div class="page" id="page-pipeline">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <span style="font-size:12px;color:var(--muted)">Click <strong style="color:var(--accent)">Move →</strong> to advance a candidate to the next stage</span>
+      <button class="btn btn-outline btn-sm" onclick="renderPipeline()">↻ Refresh</button>
+    </div>
+    <div class="pipeline" id="pipeline-board"></div>
+  </div>
+
+  <!-- COMPANIES -->
+  <div class="page" id="page-companies">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px">
+      <div class="ftabs">
+        <div class="ftab active" onclick="filterCompanies('all',this)">All</div>
+        <div class="ftab" onclick="filterCompanies('Active',this)">Active</div>
+        <div class="ftab" onclick="filterCompanies('Pending',this)">Pending</div>
+        <div class="ftab" onclick="filterCompanies('Inactive',this)">Inactive</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <div class="search-box"><span style="color:var(--muted)">🔍</span><input type="text" id="coSearch" placeholder="Search..." oninput="renderCompanies()"></div>
+        <button class="btn btn-primary btn-sm" onclick="resetCoForm();openModal('companyModal')">+ Register Company</button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="table-wrap"><table><thead><tr><th>Company</th><th>Sector</th><th>Openings</th><th>Hired</th><th>CTC</th><th>Last Drive</th><th>Status</th><th>Actions</th></tr></thead><tbody id="co-tbody"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- REPORTS -->
+  <div class="page" id="page-reports">
+    <div class="stats-grid">
+      <div class="stat-card teal"><div class="stat-icon">📈</div><div class="stat-val" id="rpt-rate">–</div><div class="stat-lbl">Placement Rate</div><div class="stat-chg">Live data</div></div>
+      <div class="stat-card orange"><div class="stat-icon">💰</div><div class="stat-val">₹5.2L</div><div class="stat-lbl">Average CTC</div><div class="stat-chg">↑ ₹0.7L</div></div>
+      <div class="stat-card purple"><div class="stat-icon">🏆</div><div class="stat-val">₹18L</div><div class="stat-lbl">Highest CTC</div><div class="stat-chg">Microsoft</div></div>
+      <div class="stat-card blue"><div class="stat-icon">⏱️</div><div class="stat-val">23d</div><div class="stat-lbl">Avg. Time to Offer</div><div class="stat-chg dn">↑ 3 days slower</div></div>
+    </div>
+    <div class="grid-2">
+      <div class="card"><div class="card-header"><div class="card-title">Branch-wise Placement</div></div><div id="branch-chart"></div></div>
+      <div class="card"><div class="card-header"><div class="card-title">Application Status Distribution</div></div><div id="status-chart" style="display:flex;gap:12px;flex-wrap:wrap;padding:8px 0"></div></div>
+    </div>
+    <div class="card"><div class="card-header"><div class="card-title">Top Recruiting Companies</div></div>
+      <div class="table-wrap"><table><thead><tr><th>Company</th><th>Hired</th><th>Avg CTC</th></tr></thead><tbody>
+        <tr><td><div class="flex-c"><span>🔵</span>TCS</div></td><td>18</td><td style="color:var(--accent)">₹3.5L</td></tr>
+        <tr><td><div class="flex-c"><span>🟠</span>Accenture</div></td><td>12</td><td style="color:var(--accent)">₹4.5L</td></tr>
+        <tr><td><div class="flex-c"><span>🟢</span>Wipro</div></td><td>10</td><td style="color:var(--accent)">₹3.8L</td></tr>
+        <tr><td><div class="flex-c"><span>🔷</span>Deloitte</div></td><td>8</td><td style="color:var(--accent)">₹6.5L</td></tr>
+        <tr><td><div class="flex-c"><span>🔴</span>Microsoft</div></td><td>2</td><td style="color:var(--accent)">₹18L</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+
+  </div>
+</main>
+</div>
+
+<!-- MODALS -->
+
+<!-- Quick Add -->
+<div class="modal-overlay" id="quickAddModal">
+  <div class="modal" style="width:340px">
+    <div class="modal-header"><div class="modal-title">Quick Add</div><button class="modal-close" onclick="closeModal('quickAddModal')">✕</button></div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <button class="btn btn-outline" style="justify-content:flex-start;padding:12px 14px" onclick="closeModal('quickAddModal');resetStudentForm();openModal('studentModal')">👤 &nbsp;Register New Student</button>
+      <button class="btn btn-outline" style="justify-content:flex-start;padding:12px 14px" onclick="closeModal('quickAddModal');resetJobForm();openModal('jobModal')">💼 &nbsp;Post New Job Opening</button>
+      <button class="btn btn-outline" style="justify-content:flex-start;padding:12px 14px" onclick="closeModal('quickAddModal');resetCoForm();openModal('companyModal')">🏢 &nbsp;Register Company</button>
+      <button class="btn btn-outline" style="justify-content:flex-start;padding:12px 14px" onclick="closeModal('quickAddModal');resetAppForm();openModal('applyModal')">📄 &nbsp;Add Application</button>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('quickAddModal')">Close</button></div>
+  </div>
+</div>
+
+<!-- Student Modal -->
+<div class="modal-overlay" id="studentModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="sMTitle">Register New Student</div><button class="modal-close" onclick="closeModal('studentModal')">✕</button></div>
+    <div class="form-grid">
+      <div class="fg"><label>Full Name *</label><input id="s_name" type="text" placeholder="e.g. Riya Sharma"></div>
+      <div class="fg"><label>Roll Number *</label><input id="s_roll" type="text" placeholder="e.g. 21CS1045"></div>
+      <div class="fg"><label>Branch *</label>
+        <select id="s_branch">
+          <option value="">-- Select Branch --</option>
+          <option>Computer Science (CSE)</option>
+          <option>Information Technology (IT)</option>
+          <option>Electronics (ECE)</option>
+          <option>Mechanical (MECH)</option>
+          <option>Civil Engineering</option>
+          <option>Electrical (EEE)</option>
+          <option>MCA</option><option>MBA</option>
+        </select>
+      </div>
+      <div class="fg"><label>Batch Year</label><input id="s_batch" type="text" placeholder="e.g. 2021-2025"></div>
+      <div class="fg"><label>CGPA *</label><input id="s_cgpa" type="number" placeholder="e.g. 8.7" min="0" max="10" step="0.01"></div>
+      <div class="fg"><label>Active Backlogs</label><input id="s_backlogs" type="number" placeholder="0" min="0" value="0"></div>
+      <div class="fg"><label>Email *</label><input id="s_email" type="email" placeholder="student@college.edu"></div>
+      <div class="fg"><label>Phone</label><input id="s_phone" type="tel" placeholder="+91 XXXXX XXXXX"></div>
+      <div class="fg"><label>Gender</label><select id="s_gender"><option value="">-- Select --</option><option>Male</option><option>Female</option><option>Other</option></select></div>
+      <div class="fg"><label>Placement Eligibility</label><select id="s_eligible"><option value="Eligible">Eligible</option><option value="Not Eligible">Not Eligible</option></select></div>
+      <div class="fg full"><label>Skills (comma-separated)</label><input id="s_skills" type="text" placeholder="Java, Python, SQL, React"></div>
+      <div class="fg full"><label>Resume / Portfolio URL</label><input id="s_resume" type="url" placeholder="https://drive.google.com/..."></div>
+    </div>
+    <div class="err-msg" id="s_err"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('studentModal')">Cancel</button>
+      <button class="btn btn-primary" id="sSBtn" onclick="submitStudent()">Register Student</button>
+    </div>
+  </div>
+</div>
+
+<!-- Job Modal -->
+<div class="modal-overlay" id="jobModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Post New Job Opening</div><button class="modal-close" onclick="closeModal('jobModal')">✕</button></div>
+    <div class="form-grid">
+      <div class="fg"><label>Company Name *</label><input id="j_company" type="text" placeholder="e.g. TCS Digital"></div>
+      <div class="fg"><label>Job Title *</label><input id="j_title" type="text" placeholder="e.g. Systems Engineer"></div>
+      <div class="fg"><label>Sector</label><select id="j_sector"><option>IT / Software</option><option>Finance / Banking</option><option>Consulting</option><option>Core Engineering</option><option>Analytics / Data Science</option><option>Other</option></select></div>
+      <div class="fg"><label>Job Type</label><select id="j_type"><option>Full Time</option><option>Internship</option><option>Contract</option></select></div>
+      <div class="fg"><label>CTC / Stipend *</label><input id="j_ctc" type="text" placeholder="e.g. ₹3.5 LPA"></div>
+      <div class="fg"><label>Min CGPA</label><input id="j_cgpa" type="number" placeholder="e.g. 7.0" min="0" max="10" step="0.1"></div>
+      <div class="fg"><label>Last Date to Apply *</label><input id="j_deadline" type="date"></div>
+      <div class="fg"><label>Drive / Interview Date</label><input id="j_drive" type="date"></div>
+      <div class="fg full"><label>Eligible Branches</label><input id="j_branches" type="text" placeholder="CSE, IT, ECE or All Branches"></div>
+      <div class="fg full"><label>Job Description</label><textarea id="j_desc" placeholder="Role overview, responsibilities, requirements..."></textarea></div>
+    </div>
+    <div class="err-msg" id="j_err"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('jobModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitJob()">Post Job</button>
+    </div>
+  </div>
+</div>
+
+<!-- Company Modal -->
+<div class="modal-overlay" id="companyModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Register New Company</div><button class="modal-close" onclick="closeModal('companyModal')">✕</button></div>
+    <div class="form-grid">
+      <div class="fg"><label>Company Name *</label><input id="c_name" type="text" placeholder="Company name"></div>
+      <div class="fg"><label>Industry / Sector *</label><input id="c_sector" type="text" placeholder="e.g. IT Services"></div>
+      <div class="fg"><label>Contact Person</label><input id="c_contact" type="text" placeholder="HR Manager Name"></div>
+      <div class="fg"><label>Contact Email</label><input id="c_email" type="email" placeholder="hr@company.com"></div>
+      <div class="fg"><label>Phone</label><input id="c_phone" type="tel" placeholder="+91 XXXXX XXXXX"></div>
+      <div class="fg"><label>Website</label><input id="c_web" type="url" placeholder="https://company.com"></div>
+      <div class="fg"><label>CTC Range Offered</label><input id="c_ctc" type="text" placeholder="e.g. ₹3–8 LPA"></div>
+      <div class="fg"><label>Eligible Batches</label><input id="c_batch" type="text" placeholder="2025, 2026"></div>
+      <div class="fg full"><label>About Company</label><textarea id="c_about" placeholder="Brief description..."></textarea></div>
+    </div>
+    <div class="err-msg" id="c_err"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('companyModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="submitCompany()">Register Company</button>
+    </div>
+  </div>
+</div>
+
+<!-- Application Modal -->
+<div class="modal-overlay" id="applyModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="aMTitle">Add Application</div><button class="modal-close" onclick="closeModal('applyModal')">✕</button></div>
+    <div class="form-grid">
+      <div class="fg"><label>Student Name *</label><input id="a_student" type="text" placeholder="Type student name..." list="student-datalist" oninput="autoFillRoll()"><datalist id="student-datalist"></datalist></div>
+      <div class="fg"><label>Roll Number</label><input id="a_roll" type="text" readonly style="opacity:.6" placeholder="Auto-filled"></div>
+      <div class="fg"><label>Company *</label><input id="a_company" type="text" placeholder="Company name"></div>
+      <div class="fg"><label>Job Role *</label><input id="a_role" type="text" placeholder="Role applied for"></div>
+      <div class="fg"><label>Applied Date *</label><input id="a_date" type="date"></div>
+      <div class="fg"><label>Current Status</label><select id="a_status"><option>Applied</option><option>Screening</option><option>Interview</option><option>Offered</option><option>Rejected</option></select></div>
+      <div class="fg full"><label>Notes / Remarks</label><textarea id="a_notes" placeholder="Any additional notes..."></textarea></div>
+    </div>
+    <div class="err-msg" id="a_err"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('applyModal')">Cancel</button>
+      <button class="btn btn-primary" id="aSBtn" onclick="submitApplication()">Add Application</button>
+    </div>
+  </div>
+</div>
+
+<!-- Update App Modal -->
+<div class="modal-overlay" id="updateAppModal">
+  <div class="modal" style="width:380px">
+    <div class="modal-header"><div class="modal-title">Update Application</div><button class="modal-close" onclick="closeModal('updateAppModal')">✕</button></div>
+    <input type="hidden" id="upd_idx">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div class="fg"><label>Student</label><input id="upd_student" readonly style="opacity:.6"></div>
+      <div class="fg"><label>Company</label><input id="upd_company" readonly style="opacity:.6"></div>
+      <div class="fg"><label>New Status *</label><select id="upd_status"><option>Applied</option><option>Screening</option><option>Interview</option><option>Offered</option><option>Rejected</option></select></div>
+      <div class="fg"><label>Round / Notes</label><input id="upd_round" type="text" placeholder="e.g. Technical Round 2"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('updateAppModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveAppUpdate()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- Notifications Modal -->
+<div class="modal-overlay" id="notifModal">
+  <div class="modal" style="width:400px">
+    <div class="modal-header"><div class="modal-title">🔔 Notifications</div><button class="modal-close" onclick="closeModal('notifModal')">✕</button></div>
+    <div id="notif-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('notifModal')">Close</button></div>
+  </div>
+</div>
+
+<!-- Confirm -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-title" id="conf-title">Are you sure?</div>
+    <div class="confirm-msg" id="conf-msg">This cannot be undone.</div>
+    <div class="confirm-actions">
+      <button class="btn btn-outline" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-danger" id="conf-ok">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════
+// DATA
+// ═══════════════════════════════════
+let students=[
+  {name:'Riya Sharma',roll:'21CS1045',branch:'CSE',cgpa:'8.7',backlogs:0,apps:3,status:'Placed',initials:'RS',grad:'#00d4aa,#3b82f6',email:'riya@college.edu',phone:'+91 98765 43210',batch:'2021-2025',gender:'Female',eligible:'Eligible',skills:'Java, React, SQL'},
+  {name:'Amit Kumar',roll:'21CS1023',branch:'CSE',cgpa:'8.2',backlogs:0,apps:2,status:'In Process',initials:'AK',grad:'#ff6b35,#7c3aed',email:'amit@college.edu',phone:'+91 98765 11111',batch:'2021-2025',gender:'Male',eligible:'Eligible',skills:'Python, ML'},
+  {name:'Priya Das',roll:'21IT1012',branch:'IT',cgpa:'7.9',backlogs:0,apps:4,status:'In Process',initials:'PD',grad:'#7c3aed,#ef4444',email:'priya@college.edu',phone:'+91 98765 22222',batch:'2021-2025',gender:'Female',eligible:'Eligible',skills:'Node.js, MongoDB'},
+  {name:'Suresh Patel',roll:'21IT1035',branch:'IT',cgpa:'7.5',backlogs:1,apps:1,status:'Applied',initials:'SP',grad:'#10b981,#3b82f6',email:'suresh@college.edu',phone:'+91 98765 33333',batch:'2021-2025',gender:'Male',eligible:'Eligible',skills:'Java, SQL'},
+  {name:'Nisha Roy',roll:'21ECE1008',branch:'ECE',cgpa:'8.0',backlogs:0,apps:2,status:'Not Placed',initials:'NR',grad:'#f59e0b,#ef4444',email:'nisha@college.edu',phone:'+91 98765 44444',batch:'2021-2025',gender:'Female',eligible:'Eligible',skills:'C++, VLSI'},
+  {name:'Kiran Mehta',roll:'21MECH1019',branch:'MECH',cgpa:'7.2',backlogs:2,apps:1,status:'Not Eligible',initials:'KM',grad:'#64748b,#94a3b8',email:'kiran@college.edu',phone:'+91 98765 55555',batch:'2021-2025',gender:'Male',eligible:'Not Eligible',skills:'AutoCAD'},
+  {name:'Sonal Joshi',roll:'21CSE1056',branch:'CSE',cgpa:'9.1',backlogs:0,apps:5,status:'Placed',initials:'SJ',grad:'#00d4aa,#7c3aed',email:'sonal@college.edu',phone:'+91 98765 66666',batch:'2021-2025',gender:'Female',eligible:'Eligible',skills:'Java, Spring, React'},
+  {name:'Rahul Verma',roll:'21IT1067',branch:'IT',cgpa:'8.4',backlogs:0,apps:3,status:'Placed',initials:'RV',grad:'#3b82f6,#10b981',email:'rahul@college.edu',phone:'+91 98765 77777',batch:'2021-2025',gender:'Male',eligible:'Eligible',skills:'Python, Data Science'},
+];
+let jobs=[
+  {emoji:'🔵',company:'TCS Digital',title:'Systems Engineer',sector:'IT / Software',type:'Full Time',tags:['Full Time','CSE/IT/ECE'],salary:'₹3.5 LPA',deadline:'2025-03-15',apps:42,status:'Active',minCgpa:6.0,branches:'CSE, IT, ECE',desc:'Entry-level software engineering role.'},
+  {emoji:'🟠',company:'Accenture',title:'Associate Software Engineer',sector:'Consulting',type:'Full Time',tags:['Full Time','CSE/IT/MCA'],salary:'₹4.5 LPA',deadline:'2025-03-22',apps:35,status:'Active',minCgpa:6.5,branches:'CSE, IT, MCA',desc:'Work on enterprise consulting projects.'},
+  {emoji:'🔷',company:'Deloitte',title:'Business Analyst',sector:'Finance / Banking',type:'Full Time',tags:['Full Time','All Branches'],salary:'₹6.5 LPA',deadline:'2025-04-05',apps:28,status:'Active',minCgpa:7.0,branches:'All Branches',desc:'Analyze business data and deliver insights.'},
+  {emoji:'🟢',company:'Wipro',title:'Project Engineer',sector:'IT / Software',type:'Full Time',tags:['Full Time','CSE/ECE'],salary:'₹3.8 LPA',deadline:'2025-04-12',apps:19,status:'Active',minCgpa:6.0,branches:'CSE, ECE, EEE',desc:'Project support and development.'},
+  {emoji:'🔴',company:'Microsoft',title:'SDE – I',sector:'IT / Software',type:'Full Time',tags:['Full Time','CSE Only'],salary:'₹18 LPA',deadline:'2025-04-20',apps:8,status:'Active',minCgpa:8.5,branches:'CSE',desc:'Software Development Engineer.'},
+  {emoji:'🟡',company:'Amazon',title:'SDE Intern',sector:'IT / Software',type:'Internship',tags:['Internship','CSE/IT'],salary:'₹80K/mo',deadline:'2025-03-30',apps:22,status:'Active',minCgpa:7.5,branches:'CSE, IT',desc:'6-month SDE internship.'},
+  {emoji:'🟣',company:'Infosys',title:'System Engineer',sector:'IT / Software',type:'Full Time',tags:['Full Time','All Branches'],salary:'₹3.6 LPA',deadline:'2025-02-28',apps:55,status:'Closed',minCgpa:6.0,branches:'All Branches',desc:'System engineering role.'},
+  {emoji:'⚫',company:'HCL Tech',title:'Graduate Engineer Trainee',sector:'IT / Software',type:'Full Time',tags:['Full Time','CSE/IT/ECE'],salary:'₹3.2 LPA',deadline:'2025-02-20',apps:38,status:'Closed',minCgpa:6.0,branches:'CSE, IT, ECE',desc:'GET programme.'},
+];
+let applications=[
+  {student:'Riya Sharma',initials:'RS',grad:'#00d4aa,#3b82f6',company:'TCS Digital',role:'Systems Engineer',date:'2025-02-10',round:'Offer Letter',status:'Offered'},
+  {student:'Amit Kumar',initials:'AK',grad:'#ff6b35,#7c3aed',company:'Accenture',role:'Assoc. Software Eng.',date:'2025-02-14',round:'Technical Round 2',status:'Interview'},
+  {student:'Priya Das',initials:'PD',grad:'#7c3aed,#ef4444',company:'Wipro',role:'Project Engineer',date:'2025-02-18',round:'Aptitude Test',status:'Screening'},
+  {student:'Suresh Patel',initials:'SP',grad:'#10b981,#3b82f6',company:'HCL Tech',role:'GET',date:'2025-02-20',round:'Submitted',status:'Applied'},
+  {student:'Nisha Roy',initials:'NR',grad:'#f59e0b,#ef4444',company:'Capgemini',role:'Analyst Trainee',date:'2025-02-12',round:'HR Round',status:'Rejected'},
+  {student:'Sonal Joshi',initials:'SJ',grad:'#00d4aa,#7c3aed',company:'Microsoft',role:'SDE – I',date:'2025-02-22',round:'Offer Letter',status:'Offered'},
+  {student:'Rahul Verma',initials:'RV',grad:'#3b82f6,#10b981',company:'Deloitte',role:'Business Analyst',date:'2025-02-25',round:'Case Study Round',status:'Interview'},
+];
+let companies=[
+  {emoji:'🔵',name:'TCS',sector:'IT Services',openings:3,hired:18,ctc:'₹3.5–5L',lastDrive:'Jan 2025',status:'Active'},
+  {emoji:'🟠',name:'Accenture',sector:'Consulting',openings:2,hired:12,ctc:'₹4.5–6L',lastDrive:'Feb 2025',status:'Active'},
+  {emoji:'🔷',name:'Deloitte',sector:'Finance',openings:1,hired:8,ctc:'₹6–9L',lastDrive:'Mar 2025',status:'Pending'},
+  {emoji:'🟢',name:'Wipro',sector:'IT Services',openings:2,hired:10,ctc:'₹3.8–5L',lastDrive:'Jan 2025',status:'Active'},
+  {emoji:'🔴',name:'Microsoft',sector:'Product',openings:1,hired:2,ctc:'₹18–25L',lastDrive:'Feb 2025',status:'Active'},
+  {emoji:'🟡',name:'Amazon',sector:'E-commerce',openings:1,hired:4,ctc:'₹12–20L',lastDrive:'Dec 2024',status:'Active'},
+  {emoji:'⚫',name:'HCL Tech',sector:'IT Services',openings:0,hired:7,ctc:'₹3.2–4.5L',lastDrive:'Nov 2024',status:'Inactive'},
+];
+let notifications=[
+  {icon:'🎉',text:'Riya Sharma received an offer from TCS Digital',time:'2 hours ago'},
+  {icon:'📢',text:'Accenture posted 3 new openings',time:'5 hours ago'},
+  {icon:'📅',text:'Amit Kumar scheduled for technical interview',time:'Yesterday'},
+  {icon:'👥',text:'15 new students registered for drive',time:'2 days ago'},
+];
+
+// ═══════════════════════════════════
+// STATE
+// ═══════════════════════════════════
+let sfFilter='all', jfFilter='all', afFilter='all', cfFilter='all';
+let editingStudentRoll=null, editingAppIdx=null;
+let confirmCb=null;
+
+// ═══════════════════════════════════
+// STORAGE (data survives page refresh)
+// ═══════════════════════════════════
+const STORE_KEY='campushire_data_v1';
+const DEFAULTS=JSON.stringify({students,jobs,applications,companies,notifications});
+function saveData(){try{localStorage.setItem(STORE_KEY,JSON.stringify({students,jobs,applications,companies,notifications}));}catch(e){}}
+function loadData(){try{const raw=localStorage.getItem(STORE_KEY);if(!raw)return;const d=JSON.parse(raw);
+  [[students,d.students],[jobs,d.jobs],[applications,d.applications],[companies,d.companies],[notifications,d.notifications]].forEach(([arr,val])=>{if(Array.isArray(val)){arr.length=0;val.forEach(x=>arr.push(x));}});}catch(e){}}
+function resetDemoData(){confirm2('Reset Data','Restore the original demo data? Your changes will be lost.','Reset',()=>{localStorage.removeItem(STORE_KEY);location.reload();});}
+loadData();
+
+// ═══════════════════════════════════
+// CSV EXPORT
+// ═══════════════════════════════════
+function exportCSV(name,rows,cols){
+  const esc=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  const csv=[cols.join(',')].concat(rows.map(r=>cols.map(c=>esc(r[c])).join(','))).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=name+'.csv';a.click();
+  showToast('Exported '+rows.length+' records to '+name+'.csv');
+}
+function exportStudents(){exportCSV('students',students,['name','roll','branch','cgpa','backlogs','status','email','phone','batch','skills']);}
+function exportApplications(){exportCSV('applications',applications,['student','company','role','date','round','status']);}
+
+// ═══════════════════════════════════
+// LOGIN (demo only: client-side, not real security)
+// ═══════════════════════════════════
+function doLogin(){
+  const u=document.getElementById('lg_user').value.trim(),p=document.getElementById('lg_pass').value;
+  if(u==='admin'&&p==='admin123'){sessionStorage.setItem('ch_auth','1');document.getElementById('loginOverlay').style.display='none';}
+  else{document.getElementById('lg_err').style.display='block';}
+}
+function logout(){sessionStorage.removeItem('ch_auth');location.reload();}
+
+
+// ═══════════════════════════════════
+// UTILS
+// ═══════════════════════════════════
+const GRADS=['#00d4aa,#3b82f6','#ff6b35,#7c3aed','#7c3aed,#ef4444','#10b981,#3b82f6','#f59e0b,#ef4444','#00d4aa,#7c3aed','#3b82f6,#10b981','#ff6b35,#3b82f6'];
+const EMOJIS=['🔵','🟠','🔷','🟢','🔴','🟡','🟣','🟤','⚫','🔶'];
+function rg(){return GRADS[Math.floor(Math.random()*GRADS.length)];}
+function re(){return EMOJIS[Math.floor(Math.random()*EMOJIS.length)];}
+function initials(n){return n.trim().split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);}
+function fmtDate(d){if(!d)return'—';try{const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('en-IN',{month:'short',day:'numeric',year:'numeric'});}catch(e){return d;}}
+
+function showToast(msg,ok=true){
+  saveData();
+  const t=document.getElementById('toast');
+  t.innerHTML=(ok?'✅':'⚠️')+' &nbsp;'+msg;
+  t.style.borderColor=ok?'var(--accent)':'var(--warning)';
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'),3500);
+}
+function showErr(id,msg){
+  const el=document.getElementById(id);
+  el.textContent='⚠ '+msg;
+  el.style.display='block';
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>el.style.display='none',4500);
+}
+function hideErr(id){const el=document.getElementById(id);if(el)el.style.display='none';}
+
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+});
+
+function confirm2(title,msg,label,cb){
+  document.getElementById('conf-title').textContent=title;
+  document.getElementById('conf-msg').textContent=msg;
+  document.getElementById('conf-ok').textContent=label||'Delete';
+  confirmCb=cb;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm(){document.getElementById('confirmOverlay').classList.remove('open');confirmCb=null;}
+document.getElementById('conf-ok').onclick=()=>{if(confirmCb)confirmCb();closeConfirm();};
+
+function sbadge(s){
+  const m={'Placed':'b-success','In Process':'b-warning','Applied':'b-info','Not Placed':'b-danger','Not Eligible':'b-muted','Applied':'b-info','Offered':'b-success','Interview':'b-warning','Screening':'b-info','Rejected':'b-danger','Active':'b-success','Pending':'b-warning','Inactive':'b-muted','Closed':'b-muted'};
+  return`<span class="badge ${m[s]||'b-muted'}">${s}</span>`;
+}
+
+// ═══════════════════════════════════
+// NAV
+// ═══════════════════════════════════
+const TITLES={dashboard:'Dashboard',students:'Students',jobs:'Job Postings',applications:'Applications',pipeline:'Recruitment Pipeline',companies:'Companies',reports:'Analytics & Reports'};
+function showPage(id,navEl){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const pg=document.getElementById('page-'+id);
+  if(pg)pg.classList.add('active');
+  document.getElementById('pageTitle').textContent=TITLES[id]||id;
+  if(navEl)navEl.classList.add('active');
+  else{const ni=document.getElementById('nav-'+id);if(ni)ni.classList.add('active');}
+  const renders={students:renderStudents,jobs:renderJobs,applications:renderApplications,pipeline:renderPipeline,companies:renderCompanies,reports:renderReports,dashboard:renderDashboard};
+  if(renders[id])renders[id]();
+}
+
+function handleSearch(q){
+  if(!q.trim())return;
+  const ql=q.toLowerCase();
+  const fs=students.filter(s=>s.name.toLowerCase().includes(ql)||s.roll.toLowerCase().includes(ql));
+  if(fs.length){
+    showPage('students',document.getElementById('nav-students'));
+    document.getElementById('studentSearch').value=q;
+    renderStudents();
+  }
+}
+
+// ═══════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════
+function renderDashboard(){
+  const placed=students.filter(s=>s.status==='Placed').length;
+  const activeJobs=jobs.filter(j=>j.status==='Active').length;
+  v('ds-students',students.length);
+  v('ds-companies',companies.length);
+  v('ds-jobs',activeJobs);
+  v('ds-placed',placed);
+  v('ds-placed-rate',students.length?(placed/students.length*100).toFixed(1)+'% placed':'0%');
+  v('nb-students',students.length);
+  v('nb-jobs',activeJobs);
+  v('nb-apps',applications.length);
+  v('nb-companies',companies.length);
+
+  // trend chart
+  const h=[40,55,35,70,60,85,50,75,90,65,80,100];
+  document.getElementById('trend-chart').innerHTML=h.map(x=>`<div class="bar" style="height:${x}%"></div>`).join('');
+
+  // domain chart
+  const domains=[['Software Eng.','42%',42,'var(--accent)'],['Data Science','28%',28,'var(--accent2)'],['Finance','18%',18,'var(--accent3)'],['Consulting','12%',12,'var(--info)']];
+  document.getElementById('domain-chart').innerHTML=domains.map(([l,p,w,c])=>`
+    <div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span>${l}</span><span style="color:${c}">${p}</span></div>
+    <div class="pbar"><div class="pfill" style="width:${w}%;background:${c}"></div></div></div>`).join('');
+
+  // recent apps
+  document.getElementById('dash-apps').innerHTML=applications.slice(-5).reverse().map(a=>`
+    <tr><td><div class="flex-c"><div class="avatar avatar-sm" style="background:linear-gradient(135deg,${a.grad})">${a.initials}</div>${a.student}</div></td>
+    <td>${a.company}</td><td>${sbadge(a.status)}</td></tr>`).join('');
+
+  // activity
+  document.getElementById('dash-activity').innerHTML=notifications.slice(0,5).map(n=>`
+    <div class="act-item"><div class="act-dot" style="background:var(--accent)"></div>
+    <div><div class="act-text">${n.text}</div><div class="act-time">${n.time}</div></div></div>`).join('');
+
+  // notif modal
+  document.getElementById('notif-list').innerHTML=notifications.map(n=>`
+    <div style="display:flex;gap:10px;padding:10px;background:var(--surface2);border-radius:var(--rs);border:1px solid var(--border)">
+      <span style="font-size:16px">${n.icon}</span>
+      <div><div style="font-size:12px">${n.text}</div><div style="font-size:10px;color:var(--muted);margin-top:2px">${n.time}</div></div>
+    </div>`).join('');
+}
+function v(id,val){const el=document.getElementById(id);if(el)el.textContent=val;}
+
+// ═══════════════════════════════════
+// STUDENTS
+// ═══════════════════════════════════
+function filterStudents(f,el){
+  sfFilter=f;
+  if(el){document.querySelectorAll('#page-students .ftab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}
+  renderStudents();
+}
+function renderStudents(){
+  const q=(document.getElementById('studentSearch')||{}).value||'';
+  let list=[...students];
+  if(sfFilter!=='all')list=list.filter(s=>s.status===sfFilter);
+  if(q.trim()){const ql=q.toLowerCase();list=list.filter(s=>s.name.toLowerCase().includes(ql)||s.roll.toLowerCase().includes(ql)||s.branch.toLowerCase().includes(ql)||s.email.toLowerCase().includes(ql));}
+  document.getElementById('student-tbody').innerHTML=list.length?list.map(s=>`
+    <tr>
+      <td><div class="flex-c"><div class="avatar avatar-sm" style="background:linear-gradient(135deg,${s.grad})">${s.initials}</div><div><div style="font-weight:500">${s.name}</div><div style="font-size:10px;color:var(--muted)">${s.gender||''} · ${s.batch||''}</div></div></div></td>
+      <td style="color:var(--muted)">${s.roll}</td><td>${s.branch}</td>
+      <td style="color:var(--accent);font-weight:600">${s.cgpa}</td>
+      <td>${+s.backlogs===0?'<span style="color:var(--success)">None</span>':'<span style="color:var(--danger)">'+s.backlogs+'</span>'}</td>
+      <td style="font-size:11px;color:var(--dim)">${s.email}</td>
+      <td>${s.apps}</td><td>${sbadge(s.status)}</td>
+      <td><div style="display:flex;gap:5px">
+        <button class="btn btn-outline btn-sm" onclick="editStudent('${s.roll}')">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteStudent('${s.roll}','${s.name.replace(/'/g,'&#39;')}')">🗑</button>
+      </div></td>
+    </tr>`).join(''):`<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--muted)">No students found.</td></tr>`;
+  // update datalist
+  const dl=document.getElementById('student-datalist');
+  if(dl)dl.innerHTML=students.map(s=>`<option value="${s.name}">`).join('');
+}
+
+function resetStudentForm(){
+  editingStudentRoll=null;
+  document.getElementById('sMTitle').textContent='Register New Student';
+  document.getElementById('sSBtn').textContent='Register Student';
+  document.getElementById('s_roll').readOnly=false;
+  document.getElementById('s_roll').style.opacity='1';
+  ['s_name','s_roll','s_batch','s_cgpa','s_backlogs','s_email','s_phone','s_skills','s_resume'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=id==='s_backlogs'?'0':'';});
+  ['s_branch','s_gender','s_eligible'].forEach(id=>{const el=document.getElementById(id);if(el)el.selectedIndex=0;});
+  hideErr('s_err');
+}
+function editStudent(roll){
+  const s=students.find(x=>x.roll===roll);if(!s)return;
+  editingStudentRoll=roll;
+  document.getElementById('sMTitle').textContent='Edit – '+s.name;
+  document.getElementById('sSBtn').textContent='Save Changes';
+  document.getElementById('s_name').value=s.name;
+  document.getElementById('s_roll').value=s.roll;
+  document.getElementById('s_roll').readOnly=true;
+  document.getElementById('s_roll').style.opacity='0.6';
+  document.getElementById('s_batch').value=s.batch||'';
+  document.getElementById('s_cgpa').value=s.cgpa;
+  document.getElementById('s_backlogs').value=s.backlogs;
+  document.getElementById('s_email').value=s.email||'';
+  document.getElementById('s_phone').value=s.phone||'';
+  document.getElementById('s_skills').value=s.skills||'';
+  document.getElementById('s_resume').value=s.resume||'';
+  // set selects
+  setSel('s_branch',s.branch,true);
+  setSel('s_gender',s.gender);
+  setSel('s_eligible',s.eligible);
+  hideErr('s_err');
+  openModal('studentModal');
+}
+function setSel(id,val,partial=false){
+  const el=document.getElementById(id);if(!el)return;
+  for(let i=0;i<el.options.length;i++){
+    if(partial?el.options[i].text.includes(val):el.options[i].value===val){el.selectedIndex=i;return;}
+  }
+}
+function deleteStudent(roll,name){
+  confirm2('Delete Student','Remove '+name+' from the system?','Delete',()=>{
+    const idx=students.findIndex(s=>s.roll===roll);
+    if(idx>=0)students.splice(idx,1);
+    renderStudents();renderDashboard();
+    showToast(name+' removed.');
+  });
+}
+function submitStudent(){
+  const name=g('s_name').trim();
+  const roll=g('s_roll').trim();
+  const branch=document.getElementById('s_branch').value;
+  const batch=g('s_batch').trim();
+  const cgpa=parseFloat(g('s_cgpa'));
+  const backlogs=parseInt(g('s_backlogs'))||0;
+  const email=g('s_email').trim();
+  const phone=g('s_phone').trim();
+  const skills=g('s_skills').trim();
+  const resume=g('s_resume').trim();
+  const gender=document.getElementById('s_gender').value;
+  const eligible=document.getElementById('s_eligible').value;
+
+  if(!name)return showErr('s_err','Full Name is required.');
+  if(!roll)return showErr('s_err','Roll Number is required.');
+  if(!branch)return showErr('s_err','Please select a Branch.');
+  if(!email)return showErr('s_err','Email is required.');
+  if(isNaN(cgpa)||cgpa<0||cgpa>10)return showErr('s_err','Enter valid CGPA (0–10).');
+
+  const bshort=branch.match(/\(([^)]+)\)/)?.[1]||branch.split(' ')[0];
+
+  if(editingStudentRoll){
+    const idx=students.findIndex(s=>s.roll===editingStudentRoll);
+    if(idx>=0)Object.assign(students[idx],{name,branch:bshort,batch,cgpa:cgpa.toFixed(1),backlogs,email,phone,skills,resume,gender,eligible,initials:initials(name),
+      status:eligible==='Not Eligible'?'Not Eligible':students[idx].status});
+    showToast(name+' updated!');
+  } else {
+    if(students.find(s=>s.roll===roll))return showErr('s_err','Roll Number already exists.');
+    students.push({name,roll,branch:bshort,batch,cgpa:cgpa.toFixed(1),backlogs,apps:0,
+      status:eligible==='Not Eligible'?'Not Eligible':'Not Placed',
+      initials:initials(name),grad:rg(),email,phone,skills,resume,gender,eligible});
+    notifications.unshift({icon:'👤',text:`${name} registered as a student`,time:'Just now'});
+    showToast(name+' registered successfully!');
+  }
+  closeModal('studentModal');
+  resetStudentForm();
+  renderStudents();renderDashboard();
+  showPage('students',document.getElementById('nav-students'));
+}
+
+// ═══════════════════════════════════
+// JOBS
+// ═══════════════════════════════════
+function filterJobs(f,el){jfFilter=f;if(el){document.querySelectorAll('#page-jobs .ftab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}renderJobs();}
+function renderJobs(){
+  const q=(document.getElementById('jobSearch')||{}).value||'';
+  let list=[...jobs];
+  if(jfFilter!=='all')list=list.filter(j=>j.status===jfFilter);
+  if(q.trim()){const ql=q.toLowerCase();list=list.filter(j=>j.company.toLowerCase().includes(ql)||j.title.toLowerCase().includes(ql)||j.sector.toLowerCase().includes(ql));}
+  document.getElementById('jobs-grid').innerHTML=list.length?list.map(j=>`
+    <div class="job-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="co-logo">${j.emoji}</div>${sbadge(j.status)}
+      </div>
+      <div class="jt">${j.title}</div>
+      <div class="jc">${j.company} &middot; ${j.sector}</div>
+      <div class="jtags">${j.tags.map(t=>`<span class="jtag">${t}</span>`).join('')}<span class="jtag">${j.apps} applicants</span></div>
+      <div class="jmeta"><span class="jsal">${j.salary}</span><span class="jdl">Closes ${fmtDate(j.deadline)}</span></div>
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button class="btn btn-outline btn-sm" style="flex:1" onclick="toggleJob(${jobs.indexOf(j)})">${j.status==='Active'?'Close Job':'Reopen'}</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteJob(${jobs.indexOf(j)},'${j.title.replace(/'/g,'&#39;')}')">🗑</button>
+      </div>
+    </div>`).join(''):`<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted)">No jobs found.</div>`;
+}
+function toggleJob(idx){jobs[idx].status=jobs[idx].status==='Active'?'Closed':'Active';renderJobs();renderDashboard();showToast('Job status updated.');}
+function deleteJob(idx,title){confirm2('Delete Job','Remove "'+title+'"?','Delete',()=>{jobs.splice(idx,1);renderJobs();renderDashboard();showToast('Job removed.');});}
+function resetJobForm(){['j_company','j_title','j_ctc','j_deadline','j_drive','j_branches','j_desc','j_cgpa'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});['j_sector','j_type'].forEach(id=>{const el=document.getElementById(id);if(el)el.selectedIndex=0;});hideErr('j_err');}
+function submitJob(){
+  const company=g('j_company').trim(),title=g('j_title').trim(),sector=document.getElementById('j_sector').value,type=document.getElementById('j_type').value;
+  const ctc=g('j_ctc').trim(),cgpa=parseFloat(g('j_cgpa'))||0,deadline=g('j_deadline'),drive=g('j_drive'),branches=g('j_branches').trim(),desc=g('j_desc').trim();
+  if(!company)return showErr('j_err','Company Name is required.');
+  if(!title)return showErr('j_err','Job Title is required.');
+  if(!ctc)return showErr('j_err','CTC / Stipend is required.');
+  if(!deadline)return showErr('j_err','Last Date to Apply is required.');
+  jobs.push({emoji:re(),company,title,sector,type,tags:[type,branches||'All Branches'],salary:ctc,deadline,drive,apps:0,status:'Active',minCgpa:cgpa,branches:branches||'All Branches',desc});
+  notifications.unshift({icon:'💼',text:`New job posted: ${title} at ${company}`,time:'Just now'});
+  closeModal('jobModal');resetJobForm();
+  renderJobs();renderDashboard();
+  showToast(`"${title}" at ${company} posted!`);
+  showPage('jobs',document.getElementById('nav-jobs'));
+}
+
+// ═══════════════════════════════════
+// APPLICATIONS
+// ═══════════════════════════════════
+function filterApps(f,el){afFilter=f;if(el){document.querySelectorAll('#page-applications .ftab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}renderApplications();}
+function renderApplications(){
+  const q=(document.getElementById('appSearch')||{}).value||'';
+  let list=applications.map((a,i)=>({...a,_i:i}));
+  if(afFilter!=='all')list=list.filter(a=>a.status===afFilter);
+  if(q.trim()){const ql=q.toLowerCase();list=list.filter(a=>a.student.toLowerCase().includes(ql)||a.company.toLowerCase().includes(ql)||a.role.toLowerCase().includes(ql));}
+  document.getElementById('app-tbody').innerHTML=list.length?list.map(a=>`
+    <tr>
+      <td><div class="flex-c"><div class="avatar avatar-sm" style="background:linear-gradient(135deg,${a.grad})">${a.initials}</div>${a.student}</div></td>
+      <td>${a.company}</td><td>${a.role}</td>
+      <td style="color:var(--muted);font-size:11px">${fmtDate(a.date)}</td>
+      <td style="color:var(--dim);font-size:11px">${a.round}</td>
+      <td>${sbadge(a.status)}</td>
+      <td><div style="display:flex;gap:5px">
+        <button class="btn btn-outline btn-sm" onclick="openUpdateApp(${a._i})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteApp(${a._i},'${a.student.replace(/'/g,'&#39;')}')">🗑</button>
+      </div></td>
+    </tr>`).join(''):`<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">No applications found.</td></tr>`;
+}
+function openUpdateApp(idx){
+  const a=applications[idx];
+  document.getElementById('upd_idx').value=idx;
+  document.getElementById('upd_student').value=a.student;
+  document.getElementById('upd_company').value=a.company;
+  document.getElementById('upd_round').value=a.round||'';
+  setSel('upd_status',a.status);
+  openModal('updateAppModal');
+}
+function saveAppUpdate(){
+  const idx=parseInt(document.getElementById('upd_idx').value);
+  const ns=document.getElementById('upd_status').value;
+  const nr=document.getElementById('upd_round').value.trim();
+  applications[idx].status=ns;
+  if(nr)applications[idx].round=nr;
+  const s=students.find(x=>x.name===applications[idx].student);
+  if(s){if(ns==='Offered')s.status='Placed';else if(ns==='Rejected')s.status='Not Placed';else if(['Screening','Interview'].includes(ns))s.status='In Process';}
+  notifications.unshift({icon:'🔄',text:`${applications[idx].student} status → ${ns} at ${applications[idx].company}`,time:'Just now'});
+  closeModal('updateAppModal');
+  renderApplications();renderStudents();renderDashboard();
+  showToast('Status updated to '+ns+'!');
+}
+function deleteApp(idx,name){confirm2('Delete Application','Remove application by '+name+'?','Delete',()=>{applications.splice(idx,1);renderApplications();renderDashboard();showToast('Application removed.');});}
+function autoFillRoll(){const name=g('a_student').trim();const s=students.find(x=>x.name.toLowerCase()===name.toLowerCase());document.getElementById('a_roll').value=s?s.roll:'';}
+function resetAppForm(){editingAppIdx=null;document.getElementById('aMTitle').textContent='Add Application';document.getElementById('aSBtn').textContent='Add Application';['a_student','a_roll','a_company','a_role','a_date','a_notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});document.getElementById('a_status').selectedIndex=0;hideErr('a_err');}
+function submitApplication(){
+  const student=g('a_student').trim(),company=g('a_company').trim(),role=g('a_role').trim(),date=g('a_date'),status=document.getElementById('a_status').value,notes=g('a_notes').trim();
+  if(!student)return showErr('a_err','Student Name is required.');
+  if(!company)return showErr('a_err','Company is required.');
+  if(!role)return showErr('a_err','Job Role is required.');
+  if(!date)return showErr('a_err','Applied Date is required.');
+  const rm={Applied:'Submitted',Screening:'Aptitude Test',Interview:'Technical Round',Offered:'Offer Letter',Rejected:'Final Round'};
+  const s=students.find(x=>x.name.toLowerCase()===student.toLowerCase());
+  const grad=s?s.grad:rg();
+  applications.push({student,initials:initials(student),grad,company,role,date,round:rm[status]+(notes?' – '+notes:''),status});
+  if(s){s.apps=(parseInt(s.apps)||0)+1;if(status==='Offered')s.status='Placed';else if(['Screening','Interview'].includes(status))s.status='In Process';}
+  notifications.unshift({icon:'📄',text:`New application: ${student} → ${company}`,time:'Just now'});
+  closeModal('applyModal');resetAppForm();
+  renderApplications();renderStudents();renderDashboard();
+  showToast(`Application for ${student} at ${company} added!`);
+  showPage('applications',document.getElementById('nav-applications'));
+}
+
+// ═══════════════════════════════════
+// PIPELINE
+// ═══════════════════════════════════
+const STAGES=['Applied','Screening','Interview','Offered','Rejected'];
+const PH={'Applied':'ph-applied','Screening':'ph-screening','Interview':'ph-interview','Offered':'ph-offered','Rejected':'ph-rejected'};
+function renderPipeline(){
+  document.getElementById('pipeline-board').innerHTML=STAGES.map(stage=>{
+    const cards=applications.filter(a=>a.status===stage);
+    return`<div class="pipe-col">
+      <div class="pipe-head ${PH[stage]}">${stage} <span class="pcnt">${cards.length}</span></div>
+      <div>${cards.map(a=>{
+        const ai=applications.indexOf(a);
+        const ns=STAGES[STAGES.indexOf(stage)+1];
+        return`<div class="app-card">
+          <div class="flex-c" style="margin-bottom:5px"><div class="avatar avatar-sm" style="background:linear-gradient(135deg,${a.grad})">${a.initials}</div>
+          <div><div class="acn">${a.student}</div><div class="acr">${a.company}</div></div></div>
+          <div class="acm"><span style="font-size:10px;color:var(--muted)">${a.round}</span>
+          ${ns?`<button class="btn btn-outline btn-sm" style="font-size:10px;padding:2px 7px" onclick="moveStage(${ai},'${ns}')">→ ${ns}</button>`:''}
+          </div></div>`;}).join('')}
+      </div></div>`;}).join('');
+}
+function moveStage(ai,ns){
+  const a=applications[ai];a.status=ns;
+  const rm={Applied:'Submitted',Screening:'Aptitude Test',Interview:'Technical Round',Offered:'Offer Letter',Rejected:'Final Round'};
+  a.round=rm[ns];
+  const s=students.find(x=>x.name===a.student);
+  if(s){if(ns==='Offered')s.status='Placed';else if(ns==='Rejected')s.status='Not Placed';else if(['Screening','Interview'].includes(ns))s.status='In Process';}
+  renderPipeline();renderStudents();renderDashboard();
+  showToast(`${a.student} moved to ${ns}!`);
+}
+
+// ═══════════════════════════════════
+// COMPANIES
+// ═══════════════════════════════════
+function filterCompanies(f,el){cfFilter=f;if(el){document.querySelectorAll('#page-companies .ftab').forEach(t=>t.classList.remove('active'));el.classList.add('active');}renderCompanies();}
+function renderCompanies(){
+  const q=(document.getElementById('coSearch')||{}).value||'';
+  let list=[...companies];
+  if(cfFilter!=='all')list=list.filter(c=>c.status===cfFilter);
+  if(q.trim()){const ql=q.toLowerCase();list=list.filter(c=>c.name.toLowerCase().includes(ql)||c.sector.toLowerCase().includes(ql));}
+  document.getElementById('co-tbody').innerHTML=list.length?list.map(c=>`
+    <tr>
+      <td><div class="flex-c"><span style="font-size:16px">${c.emoji}</span><strong>${c.name}</strong></div></td>
+      <td>${c.sector}</td><td style="color:var(--accent);font-weight:600">${c.openings}</td><td>${c.hired}</td>
+      <td style="color:var(--accent2)">${c.ctc}</td><td style="color:var(--muted);font-size:11px">${c.lastDrive}</td>
+      <td>${sbadge(c.status)}</td>
+      <td><div style="display:flex;gap:5px">
+        <button class="btn btn-warn btn-sm" onclick="toggleCo(${companies.indexOf(c)})">${c.status==='Active'?'Deactivate':'Activate'}</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteCo(${companies.indexOf(c)},'${c.name.replace(/'/g,'&#39;')}')">🗑</button>
+      </div></td>
+    </tr>`).join(''):`<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted)">No companies found.</td></tr>`;
+}
+function toggleCo(idx){companies[idx].status=companies[idx].status==='Active'?'Inactive':'Active';renderCompanies();showToast('Company status updated.');}
+function deleteCo(idx,name){confirm2('Remove Company','Remove '+name+'?','Remove',()=>{companies.splice(idx,1);renderCompanies();renderDashboard();showToast(name+' removed.');});}
+function resetCoForm(){['c_name','c_sector','c_contact','c_email','c_phone','c_web','c_ctc','c_batch','c_about'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});hideErr('c_err');}
+function submitCompany(){
+  const name=g('c_name').trim(),sector=g('c_sector').trim(),ctc=g('c_ctc').trim(),contact=g('c_contact').trim(),email=g('c_email').trim(),phone=g('c_phone').trim(),web=g('c_web').trim(),batch=g('c_batch').trim();
+  if(!name)return showErr('c_err','Company Name is required.');
+  if(!sector)return showErr('c_err','Industry / Sector is required.');
+  if(companies.find(c=>c.name.toLowerCase()===name.toLowerCase()))return showErr('c_err','Company already registered.');
+  companies.push({emoji:re(),name,sector,openings:0,hired:0,ctc:ctc||'TBD',lastDrive:'Not yet',status:'Pending',contact,email,phone,web,batch});
+  notifications.unshift({icon:'🏢',text:`${name} registered as a recruiting partner`,time:'Just now'});
+  closeModal('companyModal');resetCoForm();
+  renderCompanies();renderDashboard();
+  showToast(name+' registered!');
+  showPage('companies',document.getElementById('nav-companies'));
+}
+
+// ═══════════════════════════════════
+// REPORTS
+// ═══════════════════════════════════
+function renderReports(){
+  const placed=students.filter(s=>s.status==='Placed').length;
+  v('rpt-rate',students.length?(placed/students.length*100).toFixed(1)+'%':'0%');
+  const brs=[['CSE','var(--accent)'],['IT','var(--info)'],['ECE','var(--accent3)'],['MECH','var(--accent2)']];
+  document.getElementById('branch-chart').innerHTML=brs.map(([b,c])=>{
+    const tot=students.filter(s=>s.branch===b).length;
+    const pl=students.filter(s=>s.branch===b&&s.status==='Placed').length;
+    const pct=tot?Math.round(pl/tot*100):0;
+    return`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span>${b} (${pl}/${tot} placed)</span><span style="color:${c}">${pct}%</span></div>
+    <div class="pbar"><div class="pfill" style="width:${pct}%;background:${c}"></div></div></div>`;}).join('');
+  const sc={Applied:0,Screening:0,Interview:0,Offered:0,Rejected:0};
+  applications.forEach(a=>{if(sc[a.status]!==undefined)sc[a.status]++;});
+  const cc={Applied:'var(--muted)',Screening:'var(--info)',Interview:'var(--warning)',Offered:'var(--success)',Rejected:'var(--danger)'};
+  document.getElementById('status-chart').innerHTML=Object.entries(sc).map(([s,n])=>`
+    <div style="text-align:center;flex:1;min-width:70px">
+      <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:${cc[s]}">${n}</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px">${s}</div>
+      <div class="pbar" style="margin-top:6px"><div class="pfill" style="width:${applications.length?n/applications.length*100:0}%;background:${cc[s]}"></div></div>
+    </div>`).join('');
+}
+
+// helper
+function g(id){const el=document.getElementById(id);return el?el.value:'';}
+
+// ═══════════════════════════════════
+// INIT
+// ═══════════════════════════════════
+renderDashboard();
+renderStudents();
+renderJobs();
+renderApplications();
+renderPipeline();
+renderCompanies();
+renderReports();
+</script>
+</body>
+</html>
